@@ -319,6 +319,7 @@ function Hero() {
   const my = useMotionValue(0);
   const tiltX = useSpring(useTransform(my, [-1, 1], [8, -8]), { stiffness: 120, damping: 18 });
   const tiltY = useSpring(useTransform(mx, [-1, 1], [-10, 10]), { stiffness: 120, damping: 18 });
+  const [avatarHover, setAvatarHover] = useState(false);
 
   return (
     <section
@@ -450,6 +451,8 @@ function Hero() {
           <motion.div
             style={{ rotateX: tiltX, rotateY: tiltY, transformPerspective: 800 }}
             className="relative mx-auto w-full max-w-md"
+            onMouseEnter={() => setAvatarHover(true)}
+            onMouseLeave={() => setAvatarHover(false)}
           >
             {/* acid blob */}
             <motion.div
@@ -481,6 +484,27 @@ function Hero() {
                 </text>
               </svg>
             </motion.div>
+
+            {/* Comment/Speech Bubble Popup */}
+            <AnimatePresence>
+              {avatarHover && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85, y: 15, x: "-50%" }}
+                  animate={{ opacity: 1, scale: 1, y: 0, x: "-50%" }}
+                  exit={{ opacity: 0, scale: 0.85, y: 15, x: "-50%" }}
+                  transition={{ type: "spring", stiffness: 350, damping: 22 }}
+                  style={{ left: "50%" }}
+                  className="absolute -top-20 z-30 w-72 md:w-80 bg-ink text-cream px-5 py-3 rounded-2xl border border-acid/30 shadow-2xl text-center text-sm font-medium tracking-wide pointer-events-none select-none"
+                >
+                  <span className="relative z-10 block">
+                    Hey! I'm Vishwa, let's create something amazing ✦
+                  </span>
+                  {/* Arrow tail */}
+                  <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-ink border-r border-b border-acid/30 rotate-45" />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <img
               src={vishwaImg}
               alt="Illustrated portrait of Vishwa Gohil"
