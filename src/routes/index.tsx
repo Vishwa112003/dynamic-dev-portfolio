@@ -838,8 +838,19 @@ function ProjectRow(p: (typeof PROJECTS)[number] & { onPlay: () => void }) {
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    if (hover) v.play().catch(() => {});
-    else { v.pause(); v.currentTime = 0; }
+    let playTimeout: any;
+
+    if (hover) {
+      // Debounce video playing by 200ms to avoid loading on accidental/quick hover passes
+      playTimeout = setTimeout(() => {
+        v.play().catch(() => {});
+      }, 200);
+    } else {
+      v.pause();
+      v.currentTime = 0;
+    }
+
+    return () => clearTimeout(playTimeout);
   }, [hover]);
 
   return (
@@ -904,6 +915,7 @@ function ProjectRow(p: (typeof PROJECTS)[number] & { onPlay: () => void }) {
                       muted
                       loop
                       playsInline
+                      preload="none"
                       className="aspect-video w-full object-cover opacity-80"
                     />
                     <div className="absolute inset-0 flex items-end justify-between gap-4 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent p-5 md:p-8">
